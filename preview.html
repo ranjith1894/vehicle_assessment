@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no"/>
+<meta name="theme-color" content="#f5f0e8"/>
+<title>DetailIQ Pro — Vehicle Inspection Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@600;700&display=swap" rel="stylesheet"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#f4efe8;
+  --bg-soft:#f8f4ee;
+  --panel:#fffdf8;
+  --panel-2:#fff7ee;
+  --line:#e7ddd0;
+  --line-2:#d9ccbb;
+  --text:#1f2933;
+  --muted:#6c7883;
+  --muted-2:#8d98a1;
+  --brand:#136f63;
+  --brand-2:#1d8c7d;
+  --accent:#eb7f57;
+  --amber:#d89a2b;
+  --red:#cf564c;
+  --green:#1d8f60;
+  --purple:#7668dd;
+  --shadow:0 18px 40px rgba(37,30,21,.08);
+  --shadow-sm:0 8px 20px rgba(37,30,21,.06);
+  --r-xl:28px;
+  --r-lg:22px;
+  --r-md:16px;
+  --r-sm:12px;
+}
+html,body{height:100%;background:linear-gradient(180deg,#efe7dc,#f7f2eb 44%,#fbf8f2);font-family:'Inter',sans-serif;color:var(--text);overflow:hidden}
+#app{height:100vh;max-width:460px;margin:0 auto;position:relative;background:linear-gradient(180deg,rgba(255,255,255,.64),rgba(255,255,255,.84));backdrop-filter:blur(18px);box-shadow:0 0 0 1px rgba(255,255,255,.75),0 40px 90px rgba(24,17,10,.1)}
+.screen{position:absolute;inset:0;display:flex;flex-direction:column;transition:transform .35s ease,opacity .35s ease;background:transparent}
+.screen.out-right{transform:translateX(110%);opacity:0;pointer-events:none}
+.screen.out-left{transform:translateX(-15%);opacity:0;pointer-events:none}
+.topbar{padding:18px 18px 12px;display:flex;align-items:center;gap:12px;flex-shrink:0;background:linear-gradient(180deg,rgba(247,242,235,.96),rgba(247,242,235,.72));backdrop-filter:blur(12px)}
+.back-btn,.ghost-btn,.icon-btn{border:none;background:var(--panel);height:42px;min-width:42px;padding:0 14px;border-radius:999px;color:var(--text);box-shadow:var(--shadow-sm);font-weight:600;cursor:pointer;border:1px solid rgba(255,255,255,.95)}
+.icon-btn{display:flex;align-items:center;justify-content:center;padding:0}
+.title-wrap{flex:1}
+.kicker{font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--muted-2);font-weight:700;margin-bottom:2px}
+.page-title{font-family:'Space Grotesk',sans-serif;font-size:20px;font-weight:700;letter-spacing:-.02em}
+.progress{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;padding:0 18px 14px;flex-shrink:0}
+.p-step{background:rgba(255,255,255,.55);border:1px solid var(--line);border-radius:999px;padding:10px 8px;display:flex;align-items:center;justify-content:center;gap:8px;font-size:12px;font-weight:700;color:var(--muted);box-shadow:var(--shadow-sm)}
+.p-step.active{background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#fff;border-color:transparent}
+.p-step.done{background:#edf7f4;color:var(--green);border-color:#c9e8dc}
+.p-step span{width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,.06);font-size:11px}
+.p-step.active span{background:rgba(255,255,255,.18)}
+.p-step.done span{background:#dff3ea}
+.content{flex:1;overflow:auto;padding:0 18px 120px}
+.content::-webkit-scrollbar{display:none}
+.section{margin-bottom:18px}
+.card{background:var(--panel);border:1px solid rgba(255,255,255,.88);border-radius:var(--r-lg);box-shadow:var(--shadow);padding:16px}
+.card.soft{background:var(--panel-2)}
+.section-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.section-title{font-size:15px;font-weight:800;letter-spacing:-.02em}
+.section-sub{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.45}
+.badge{display:inline-flex;align-items:center;gap:6px;padding:8px 12px;border-radius:999px;background:#eff8f5;color:var(--green);border:1px solid #d4eee4;font-size:11px;font-weight:700}
+.badge.warning{background:#fff4ee;color:var(--accent);border-color:#ffd8ca}
+.hero{padding:26px 22px;border-radius:32px;background:linear-gradient(135deg,#fffaf3 0%,#f8efe2 58%,#efe7ff 100%);box-shadow:0 24px 60px rgba(27,20,14,.08);border:1px solid rgba(255,255,255,.9)}
+.brand-mark{width:54px;height:54px;border-radius:18px;background:linear-gradient(135deg,var(--brand),#7dd5c9);display:flex;align-items:center;justify-content:center;color:#fff;font-size:26px;box-shadow:0 14px 30px rgba(19,111,99,.28);margin-bottom:16px}
+.hero h1{font-family:'Space Grotesk',sans-serif;font-size:34px;line-height:1.02;letter-spacing:-.04em;margin-bottom:10px}
+.hero p{font-size:14px;color:var(--muted);line-height:1.65;margin-bottom:18px}
+.feature-list{display:grid;gap:10px;margin:20px 0 24px}
+.feature{display:flex;gap:12px;padding:14px;border-radius:18px;background:rgba(255,255,255,.66);border:1px solid rgba(255,255,255,.8)}
+.feature i{width:36px;height:36px;border-radius:12px;background:#f0f7f5;display:flex;align-items:center;justify-content:center;font-style:normal}
+.feature strong{display:block;font-size:13px;margin-bottom:2px}
+.feature span{font-size:12px;color:var(--muted);line-height:1.45}
+.primary-btn,.secondary-btn,.tertiary-btn{height:52px;border:none;border-radius:18px;font-size:15px;font-weight:800;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;box-shadow:var(--shadow-sm)}
+.primary-btn{background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#fff}
+.secondary-btn{background:var(--panel);color:var(--text);border:1px solid var(--line)}
+.tertiary-btn{height:44px;border-radius:14px;background:#f7f2eb;color:var(--text);border:1px dashed var(--line-2)}
+.footer-actions{position:absolute;left:0;right:0;bottom:0;display:flex;gap:10px;padding:14px 18px 22px;background:linear-gradient(180deg,rgba(247,242,235,0),rgba(247,242,235,.7) 28%,rgba(247,242,235,.96) 56%,#f7f2eb 100%)}
+.footer-actions .secondary-btn{flex:0 0 auto;padding:0 18px}
+.footer-actions .primary-btn{flex:1}
+.grid-2,.grid-3{display:grid;gap:10px}
+.grid-2{grid-template-columns:1fr 1fr}
+.grid-3{grid-template-columns:repeat(3,1fr)}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:12px;font-weight:700;color:var(--muted)}
+.input,select.input,textarea.input{width:100%;background:#fff;border:1px solid var(--line);border-radius:14px;padding:13px 14px;font:inherit;color:var(--text);outline:none;transition:border-color .18s,box-shadow .18s}
+.input:focus{border-color:#8fcfc5;box-shadow:0 0 0 4px rgba(29,140,125,.08)}
+select.input{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236c7883' stroke-width='2'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:38px}
+.stack{display:grid;gap:10px}
+.inline-tools{display:grid;grid-template-columns:1fr auto;gap:10px}
+.scan-strip{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+.action-chip{padding:14px;border-radius:18px;background:linear-gradient(180deg,#fffaf6,#fff);border:1px solid var(--line);cursor:pointer;font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;gap:8px}
+.summary-banner{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:14px 16px;border-radius:20px;background:linear-gradient(135deg,#ebf7f5,#fff);border:1px solid #d9eee9;margin-bottom:14px}
+.summary-banner strong{font-size:14px}
+.summary-banner span{font-size:12px;color:var(--muted);display:block;margin-top:2px}
+.choice-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.choice-card{padding:14px 10px;border-radius:18px;border:1px solid var(--line);background:#fff;text-align:center;cursor:pointer;transition:transform .15s,border-color .15s,box-shadow .15s}
+.choice-card .icon{font-size:24px;margin-bottom:6px}
+.choice-card .name{font-size:13px;font-weight:800}
+.choice-card .sub{font-size:11px;color:var(--muted);margin-top:3px}
+.choice-card.active{border-color:#8bcfc4;box-shadow:0 0 0 4px rgba(29,140,125,.08);transform:translateY(-1px)}
+.option-list{display:grid;gap:8px}
+.option{padding:14px;border-radius:16px;border:1px solid var(--line);background:#fff;display:flex;align-items:center;justify-content:space-between;gap:12px;cursor:pointer}
+.option.active{border-color:#8bcfc4;box-shadow:0 0 0 4px rgba(29,140,125,.08)}
+.option-left strong{display:block;font-size:13px}
+.option-left span{display:block;font-size:11px;color:var(--muted);margin-top:3px;line-height:1.45}
+.option-right{font-size:12px;font-weight:800;color:var(--brand);text-align:right}
+.segmented{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:6px;border-radius:18px;background:#f5efe8;border:1px solid var(--line)}
+.segmented button{height:42px;border:none;border-radius:14px;background:transparent;font-weight:800;color:var(--muted);cursor:pointer}
+.segmented button.active{background:#fff;color:var(--brand);box-shadow:var(--shadow-sm)}
+.service-tabs{display:flex;gap:8px;overflow:auto;padding-bottom:2px;margin-bottom:10px}
+.service-tabs::-webkit-scrollbar{display:none}
+.service-tab{flex:0 0 auto;padding:10px 14px;border-radius:999px;border:1px solid var(--line);background:#fff;font-size:12px;font-weight:800;color:var(--muted);cursor:pointer}
+.service-tab.active{background:#edf7f5;color:var(--green);border-color:#c9e8dc}
+.inspector-shell{padding:16px;border-radius:28px;background:linear-gradient(180deg,#fffefb,#fbf6ef);border:1px solid rgba(255,255,255,.92);box-shadow:var(--shadow)}
+.inspector-top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;margin-bottom:12px}
+.inspector-top strong{display:block;font-size:18px;font-family:'Space Grotesk',sans-serif;letter-spacing:-.02em}
+.inspector-top span{font-size:12px;color:var(--muted);line-height:1.45}
+.view-tabs{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:12px}
+.view-tab{height:42px;border:none;border-radius:14px;background:#fff;border:1px solid var(--line);font-size:12px;font-weight:800;color:var(--muted);cursor:pointer}
+.view-tab.active{background:linear-gradient(135deg,var(--brand),var(--brand-2));color:#fff;border-color:transparent}
+.vehicle-stage{position:relative;height:300px;border-radius:24px;background:radial-gradient(circle at 50% 45%,rgba(19,111,99,.08),transparent 38%),linear-gradient(180deg,#f3eee6,#fcfaf5);border:1px solid var(--line);overflow:hidden;display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 0 1px rgba(255,255,255,.7)}
+.vehicle-stage:before{content:'';position:absolute;inset:14px;border:1px dashed rgba(108,120,131,.28);border-radius:18px;pointer-events:none}
+
+#vehicle-diagram{position:absolute;inset:34px 12px 42px;display:flex;align-items:center;justify-content:center;z-index:1;pointer-events:none}
+.vehicle-stage .stage-tag,.vehicle-stage .stage-hint{z-index:4}
+.marker{z-index:5;pointer-events:none}
+.stage-tag{position:absolute;top:14px;left:14px;padding:8px 12px;border-radius:999px;background:rgba(255,255,255,.9);border:1px solid var(--line);font-size:11px;font-weight:800;color:var(--muted)}
+.stage-hint{position:absolute;bottom:12px;left:50%;transform:translateX(-50%);padding:9px 14px;border-radius:999px;background:rgba(31,41,51,.78);color:#fff;font-size:11px;white-space:nowrap}
+.car-svg{width:100%;height:100%;max-width:390px;filter:drop-shadow(0 22px 26px rgba(33,24,16,.12))}
+.car-fill{fill:#dff0ec;stroke:#126b60;stroke-width:2.4}
+.car-glass{fill:#f9ffff;stroke:#91bdb5;stroke-width:2;opacity:.96}
+.car-dark{fill:#212833}.car-tire{fill:#181c21}.car-rim{fill:#eef3f0}.car-light{fill:#ffd08f}.car-tail{fill:#ef7b73}.car-detail{stroke:#72a99f;stroke-width:1.7;fill:none;opacity:.8}.car-label{font:800 12px Inter,Arial;fill:rgba(31,41,51,.52);letter-spacing:.08em}.car-main-label{font:900 16px Inter,Arial;fill:rgba(19,111,99,.45);letter-spacing:.14em}.car-label-soft{font:800 11px Inter,Arial;fill:rgba(31,41,51,.44);letter-spacing:.08em}.interior-fill{fill:#f3e5cd;stroke:#b47a2c;stroke-width:2.2}.seat-fill{fill:#fff9ef;stroke:#d6a963;stroke-width:2}
+.orientation-note{margin-top:12px;padding:12px 14px;border-radius:16px;background:#fff;border:1px solid var(--line);display:flex;align-items:flex-start;gap:10px}
+.orientation-note i{font-style:normal;width:26px;height:26px;border-radius:10px;background:#f2f7ff;display:flex;align-items:center;justify-content:center}
+.marker{position:absolute;transform:translate(-50%,-50%);width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:#fff;font-size:12px;font-weight:800;box-shadow:0 10px 24px rgba(0,0,0,.18);border:2px solid rgba(255,255,255,.8)}
+.marker.s1{background:#4ba97a}.marker.s2{background:#699dc8}.marker.s3{background:#d89a2b}.marker.s4{background:#eb7f57}.marker.s5{background:#cf564c}
+.toolbar{display:grid;grid-template-columns:1fr 120px auto;gap:8px;margin-top:14px}
+.score-strip{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+.metric{padding:14px;border-radius:18px;background:#fff;border:1px solid var(--line);text-align:center}
+.metric small{display:block;font-size:11px;color:var(--muted);margin-bottom:6px}
+.metric strong{display:block;font-family:'Space Grotesk',sans-serif;font-size:28px;letter-spacing:-.03em}
+.issue-list{display:grid;gap:8px;margin-top:12px}
+.issue-item{display:flex;align-items:flex-start;justify-content:space-between;gap:10px;padding:12px 14px;border-radius:16px;background:#fff;border:1px solid var(--line)}
+.issue-item strong{display:block;font-size:13px}
+.issue-item span{display:block;font-size:11px;color:var(--muted);margin-top:3px}
+.issue-item button{border:none;background:#fff2ee;color:var(--red);height:34px;min-width:34px;border-radius:10px;font-weight:800;cursor:pointer}
+.decline{display:none;padding:14px;border-radius:18px;background:#fff2ef;border:1px solid #ffd3cd;color:var(--red);font-size:12px;line-height:1.55;font-weight:600;margin-bottom:12px}
+.decline.show{display:block}
+.collapse-head{display:flex;align-items:center;justify-content:space-between;gap:10px;cursor:pointer}
+.collapse-head button{border:none;background:#f7f2eb;padding:8px 12px;border-radius:12px;font-weight:800;color:var(--muted);cursor:pointer}
+.collapse-body{display:none;margin-top:12px}
+.collapse-body.open{display:block}
+.score-card{padding:14px;border-radius:18px;background:#fff;border:1px solid var(--line);margin-bottom:10px}
+.score-title{display:flex;justify-content:space-between;align-items:center;gap:10px;font-size:13px;font-weight:800;margin-bottom:10px}
+.score-title span{font-size:11px;color:var(--brand)}
+.score-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.score-btn{border:none;border-radius:12px;background:#f8f4ee;border:1px solid var(--line);padding:9px 4px;cursor:pointer;text-align:center}
+.score-btn b{display:block;font-size:14px}
+.score-btn small{display:block;font-size:9px;line-height:1.25;color:var(--muted);margin-top:3px}
+.score-btn.active{background:linear-gradient(135deg,var(--brand),var(--brand-2));border-color:transparent;color:#fff}
+.score-btn.decline-btn.active{background:linear-gradient(135deg,var(--red),#d86b5f)}
+.score-btn.active small{color:rgba(255,255,255,.82)}
+.pill-line{display:flex;flex-wrap:wrap;gap:8px}
+.pill{padding:10px 12px;border-radius:999px;background:#fff;border:1px solid var(--line);font-size:12px;font-weight:800;cursor:pointer;color:var(--muted)}
+.pill.active{background:#edf7f5;color:var(--green);border-color:#c9e8dc}
+.package-card{padding:16px;border-radius:22px;background:#fff;border:1px solid var(--line);box-shadow:var(--shadow-sm);margin-bottom:10px;cursor:pointer;position:relative}
+.package-card.active{border-color:#8bcfc4;box-shadow:0 0 0 4px rgba(29,140,125,.08)}
+.package-card.recommended:before{content:'Recommended';position:absolute;top:0;right:18px;background:linear-gradient(135deg,var(--purple),#8a7ef5);color:#fff;padding:6px 10px;border-radius:0 0 12px 12px;font-size:10px;font-weight:800}
+.package-head{display:flex;justify-content:space-between;gap:10px;margin-bottom:10px}
+.package-head strong{font-size:15px;display:block}
+.package-head span{display:block;font-size:11px;color:var(--muted);margin-top:3px}
+.package-price{font-family:'Space Grotesk',sans-serif;font-size:22px;color:var(--brand);text-align:right}
+.package-price small{display:block;font-size:10px;color:var(--muted);font-family:'Inter',sans-serif}
+.features{display:grid;gap:4px}
+.features div{font-size:11px;color:var(--muted);line-height:1.45}
+.quote-breakdown{display:grid;gap:10px}
+.line-item{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:4px 0;font-size:13px}
+.line-item span:first-child{color:var(--muted)}
+.total-panel{padding:16px;border-radius:22px;background:linear-gradient(135deg,#edf7f5,#fff);border:1px solid #d9eee9}
+.total-panel small{display:block;font-size:11px;color:var(--muted);margin-bottom:4px}
+.total-panel strong{display:block;font-family:'Space Grotesk',sans-serif;font-size:34px;color:var(--brand);letter-spacing:-.04em}
+.total-panel span{display:block;font-size:11px;color:var(--muted);margin-top:6px;line-height:1.5}
+.signature-pad{position:relative;background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden}
+.signature-pad canvas{display:block;width:100%;height:100px;touch-action:none}
+.clear-link{position:absolute;top:10px;right:10px;border:none;background:#f7f2eb;padding:7px 10px;border-radius:10px;font-size:11px;font-weight:800;cursor:pointer}
+.send-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.done-wrap{padding:34px 22px;text-align:center;display:flex;flex-direction:column;justify-content:center;height:100%}
+.done-ring{width:86px;height:86px;border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 18px;background:linear-gradient(135deg,#edf7f5,#c8ebdf);font-size:38px;box-shadow:0 18px 38px rgba(29,143,96,.18)}
+.done-wrap h2{font-family:'Space Grotesk',sans-serif;font-size:28px;letter-spacing:-.03em;margin-bottom:8px}
+.done-wrap p{font-size:14px;color:var(--muted);line-height:1.65;margin-bottom:18px}
+.ref-badge{display:inline-flex;margin:0 auto 22px;padding:10px 16px;border-radius:999px;background:#fff;border:1px solid var(--line);font-weight:800;font-size:13px;color:var(--brand)}
+.note{font-size:11px;color:var(--muted);line-height:1.5}
+@media (max-width:380px){
+  .grid-2,.grid-3,.choice-grid,.score-strip,.send-grid,.toolbar,.scan-strip{grid-template-columns:1fr}
+  .view-tabs{grid-template-columns:repeat(2,1fr)}
+  .service-tabs{display:grid;grid-template-columns:1fr 1fr}
+  .service-tab{width:100%;text-align:center}
+}
+
+
+/* ===================== DETAILIQ PRO PREMIUM THEME ===================== */
+:root{
+  --bg:#eef2f7;
+  --bg-soft:#f7f9fc;
+  --panel:#ffffff;
+  --panel-2:#f8fafc;
+  --line:#e4e9f2;
+  --line-2:#cbd5e1;
+  --text:#0f172a;
+  --muted:#64748b;
+  --muted-2:#94a3b8;
+  --brand:#0f766e;
+  --brand-2:#14b8a6;
+  --accent:#2563eb;
+  --amber:#f59e0b;
+  --red:#ef4444;
+  --green:#16a34a;
+  --purple:#7c3aed;
+  --shadow:0 24px 70px rgba(15,23,42,.12);
+  --shadow-sm:0 12px 30px rgba(15,23,42,.08);
+  --r-xl:30px;
+  --r-lg:24px;
+  --r-md:18px;
+  --r-sm:14px;
+}
+html,body{
+  background:
+    radial-gradient(circle at 12% 0%,rgba(20,184,166,.16),transparent 32%),
+    radial-gradient(circle at 90% 10%,rgba(37,99,235,.14),transparent 30%),
+    linear-gradient(145deg,#edf3f8,#f8fafc 52%,#eef2f7);
+  color:var(--text);
+}
+#app{
+  max-width:480px;
+  background:rgba(248,250,252,.86);
+  border-left:1px solid rgba(255,255,255,.75);
+  border-right:1px solid rgba(255,255,255,.75);
+  box-shadow:0 40px 120px rgba(15,23,42,.18);
+}
+.content{padding-left:18px;padding-right:18px;}
+.hero{
+  min-height:calc(100vh - 56px);
+  display:flex;flex-direction:column;justify-content:center;
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.92),rgba(255,255,255,.72)),
+    radial-gradient(circle at 50% 20%,rgba(20,184,166,.18),transparent 36%);
+  border:1px solid rgba(255,255,255,.88);
+  box-shadow:var(--shadow);
+  position:relative;overflow:hidden;
+}
+.hero:before{
+  content:'DETAILIQ PRO';position:absolute;top:18px;left:18px;
+  font-size:10px;font-weight:900;letter-spacing:.18em;color:#0f766e;
+  background:#ecfdf5;border:1px solid #c9f2e4;border-radius:999px;padding:8px 11px;
+}
+.hero:after{
+  content:'';position:absolute;right:-42px;top:-42px;width:150px;height:150px;border-radius:50%;
+  background:linear-gradient(135deg,rgba(20,184,166,.25),rgba(37,99,235,.16));filter:blur(1px);
+}
+.brand-mark{
+  width:70px;height:70px;border-radius:24px;
+  background:linear-gradient(135deg,#0f766e,#14b8a6 52%,#2563eb);
+  color:white;box-shadow:0 22px 44px rgba(20,184,166,.34);font-size:30px;margin-bottom:22px;
+}
+.hero h1{font-size:42px;line-height:.98;letter-spacing:-.06em;color:#0b1220;max-width:360px;}
+.hero p{font-size:14px;line-height:1.75;color:#475569;max-width:370px;margin-bottom:22px;}
+.feature-list{gap:10px;margin-bottom:26px;}
+.feature{
+  padding:14px;border-radius:22px;background:rgba(255,255,255,.82);border:1px solid rgba(226,232,240,.95);
+  box-shadow:0 10px 26px rgba(15,23,42,.05);backdrop-filter:blur(10px);
+}
+.feature i{width:42px;height:42px;border-radius:16px;background:linear-gradient(135deg,#ecfeff,#eff6ff);font-size:19px;}
+.feature strong{font-size:13px;color:#0f172a}.feature span{font-size:11.5px;line-height:1.55;color:#64748b}
+.topbar{
+  padding:16px 18px 12px;
+  background:linear-gradient(180deg,rgba(248,250,252,.96),rgba(248,250,252,.74));
+  border-bottom:1px solid rgba(226,232,240,.72);
+}
+.kicker{font-size:10px;letter-spacing:.14em;text-transform:uppercase;color:#0f766e;font-weight:900;}
+.page-title{font-size:19px;letter-spacing:-.04em;color:#0f172a;}
+.icon-btn,.ghost-btn{
+  border:1px solid rgba(226,232,240,.95);background:rgba(255,255,255,.86);color:#334155;
+  box-shadow:0 8px 24px rgba(15,23,42,.06);
+}
+.ghost-btn{height:38px;padding:0 14px;font-weight:800}
+.progress{padding:0 18px 14px;background:rgba(248,250,252,.68);}
+.p-step{
+  height:40px;border-radius:16px;background:#fff;border:1px solid #e2e8f0;color:#64748b;font-size:11px;font-weight:900;
+}
+.p-step span{background:#f1f5f9;color:#64748b}.p-step.active{background:linear-gradient(135deg,#0f766e,#14b8a6);border-color:transparent;color:#fff;box-shadow:0 14px 28px rgba(20,184,166,.22)}.p-step.done{background:#ecfdf5;color:#047857;border-color:#bbf7d0}.p-step.active span{background:rgba(255,255,255,.22);color:#fff}.p-step.done span{background:#d1fae5;color:#047857}
+.summary-banner,.card,.inspector-shell,.package-card,.metric,.issue-item,.option,.choice-card,.orientation-note,.total-panel,.signature-pad{
+  border-color:rgba(226,232,240,.95)!important;
+  box-shadow:0 14px 36px rgba(15,23,42,.06);
+}
+.card,.option,.choice-card,.metric,.issue-item{background:rgba(255,255,255,.92)}
+.card.soft,.section.card.soft{background:linear-gradient(180deg,rgba(255,255,255,.92),rgba(241,245,249,.86));}
+.section-head{align-items:center}.section-title{font-size:15px;letter-spacing:-.02em;color:#0f172a}.section-sub{font-size:11.5px;line-height:1.45;color:#64748b}
+.input{
+  height:52px;border-radius:16px;background:#fff;border:1px solid #dbe4ee;color:#0f172a;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.8);font-size:13px;
+}
+.input:focus{border-color:#14b8a6;box-shadow:0 0 0 4px rgba(20,184,166,.11)}
+.field label{font-size:10px;font-weight:900;letter-spacing:.08em;text-transform:uppercase;color:#64748b;margin-bottom:7px;}
+.primary-btn{
+  height:54px;border-radius:18px;background:linear-gradient(135deg,#0f766e,#14b8a6 58%,#2563eb);
+  box-shadow:0 16px 36px rgba(20,184,166,.24);font-weight:900;letter-spacing:-.01em;
+}
+.secondary-btn{height:54px;border-radius:18px;background:#fff;border:1px solid #dbe4ee;color:#334155;font-weight:900;box-shadow:0 10px 24px rgba(15,23,42,.06)}
+.footer-actions{
+  padding:14px 18px 24px;background:linear-gradient(to top,rgba(248,250,252,.98) 70%,rgba(248,250,252,0));
+  border-top:1px solid rgba(226,232,240,.55);
+}
+.action-chip,.service-tab,.pill{background:#fff;border-color:#dbe4ee;color:#334155;box-shadow:0 8px 20px rgba(15,23,42,.04)}
+.action-chip:hover,.service-tab.active,.pill.active{background:#ecfdf5;color:#0f766e;border-color:#99f6e4;}
+.choice-card{padding:16px 10px;border-radius:22px}.choice-card.active,.option.active,.package-card.active{border-color:#14b8a6!important;box-shadow:0 0 0 4px rgba(20,184,166,.12),0 16px 36px rgba(15,23,42,.06)}
+.choice-card .icon{font-size:24px}.choice-card .name{font-size:13px}.choice-card .sub{font-size:11px;color:#64748b}
+.segmented{background:#edf2f7;border-color:#dbe4ee}.segmented button{font-weight:900}.segmented button.active{background:#fff;color:#0f766e;box-shadow:0 10px 22px rgba(15,23,42,.08)}
+.badge{background:#eefcf8;border-color:#b7f3e5;color:#0f766e;font-weight:900}.badge.warning{background:#fff7ed;border-color:#fed7aa;color:#c2410c}
+.inspector-shell{
+  padding:16px;border-radius:30px;background:linear-gradient(180deg,#ffffff,#f8fafc);
+  position:relative;overflow:hidden;
+}
+.inspector-shell:before{
+  content:'';position:absolute;inset:0 0 auto 0;height:110px;background:linear-gradient(135deg,rgba(20,184,166,.08),rgba(37,99,235,.07));pointer-events:none;
+}
+.inspector-top{position:relative;z-index:2;margin-bottom:14px}.inspector-top strong{font-size:20px;letter-spacing:-.045em;color:#0f172a}.inspector-top span{font-size:12px;color:#64748b;line-height:1.55}
+#selected-issue-pill{background:#0f172a;color:#fff;border-color:#0f172a;box-shadow:0 12px 24px rgba(15,23,42,.18)}
+.view-tabs{grid-template-columns:repeat(6,1fr);gap:6px;background:#eef2f7;padding:6px;border-radius:20px;border:1px solid #e2e8f0;margin-bottom:14px;}
+.view-tab{height:42px;border-radius:14px;background:transparent;border:0;color:#64748b;font-size:10px;font-weight:900;}
+.view-tab.active{background:#fff;color:#0f766e;box-shadow:0 10px 22px rgba(15,23,42,.08)}
+.vehicle-stage{
+  height:330px;border-radius:28px;
+  background:
+    radial-gradient(circle at 50% 46%,rgba(20,184,166,.14),transparent 31%),
+    linear-gradient(180deg,#f8fafc 0%,#ffffff 48%,#eef2f7 100%);
+  border:1px solid #dbe4ee;box-shadow:inset 0 1px 0 rgba(255,255,255,.9),0 18px 50px rgba(15,23,42,.08);
+}
+.vehicle-stage:before{inset:18px;border-radius:22px;border-color:rgba(100,116,139,.25)}
+.vehicle-stage:after{content:'';position:absolute;left:52px;right:52px;bottom:48px;height:20px;border-radius:50%;background:rgba(15,23,42,.12);filter:blur(16px);z-index:0}
+#vehicle-diagram{inset:42px 14px 50px;z-index:1}.car-svg{max-width:420px;filter:drop-shadow(0 28px 28px rgba(15,23,42,.16))}.car-fill{fill:#e0f7f3;stroke:#0f766e;stroke-width:2.7}.car-glass{fill:#ffffff;stroke:#8bd6cb;stroke-width:2.2}.car-detail{stroke:#4cbcaf;stroke-width:1.8}.car-main-label{fill:rgba(15,118,110,.34);font-size:17px}.car-label-soft{fill:rgba(71,85,105,.46)}
+.stage-tag{top:16px;left:16px;background:rgba(255,255,255,.92);border-color:#dbe4ee;color:#0f766e;box-shadow:0 8px 20px rgba(15,23,42,.06)}
+.stage-hint{bottom:14px;background:rgba(15,23,42,.86);box-shadow:0 10px 26px rgba(15,23,42,.22)}
+.orientation-note{background:#fff;border-radius:20px}.orientation-note i{background:#eff6ff;color:#2563eb}.toolbar{grid-template-columns:1fr 130px 104px;gap:10px}.toolbar .secondary-btn{height:52px;border-radius:16px;font-size:12px}
+.marker{width:30px;height:30px;border:3px solid #fff;box-shadow:0 14px 30px rgba(15,23,42,.24);font-size:12px}.marker:after{content:'';position:absolute;inset:-8px;border-radius:50%;border:1px solid currentColor;opacity:.25}.marker.s1{background:#16a34a}.marker.s2{background:#2563eb}.marker.s3{background:#f59e0b}.marker.s4{background:#f97316}.marker.s5{background:#ef4444}
+.score-strip{gap:12px}.metric{border-radius:22px;padding:16px 10px}.metric small{font-weight:800;text-transform:uppercase;letter-spacing:.08em;font-size:10px}.metric strong{font-size:31px;color:#0f172a}
+.issue-list{gap:10px}.issue-item{border-radius:20px;padding:14px}.issue-item strong{font-size:13.5px}.issue-item span{font-size:11.5px}.issue-item button{background:#fef2f2;color:#ef4444;border:1px solid #fee2e2}
+.package-card{border-radius:24px;padding:18px}.package-card.recommended:before{background:linear-gradient(135deg,#7c3aed,#2563eb);right:20px;padding:7px 12px;border-radius:0 0 14px 14px}.package-head strong{font-size:16px}.price{font-size:20px;color:#0f766e}.total-panel{border-radius:26px;background:linear-gradient(135deg,#0f172a,#0f766e);color:#fff;padding:22px}.total-panel small,.total-panel span{color:rgba(255,255,255,.72)}.total-panel strong{font-size:38px;color:#fff;letter-spacing:-.05em}.line-item{border-bottom:1px solid #edf2f7;padding:8px 0}.line-item span{color:#64748b}.line-item strong{color:#0f172a;text-align:right}
+.signature-pad{border-radius:22px;background:#fff;border:1px solid #dbe4ee;overflow:hidden}.clear-link{background:#f8fafc;border:1px solid #e2e8f0;color:#64748b}
+.done-wrap{background:linear-gradient(180deg,#fff,#f8fafc);border:1px solid #e2e8f0;box-shadow:var(--shadow);border-radius:32px}.done-ring{background:linear-gradient(135deg,#0f766e,#14b8a6);box-shadow:0 20px 42px rgba(20,184,166,.26)}.ref-badge{background:#ecfdf5;color:#0f766e;border:1px solid #99f6e4}
+@media(max-width:430px){
+  .hero h1{font-size:36px}.view-tabs{grid-template-columns:repeat(3,1fr)}.view-tab{font-size:11px}.vehicle-stage{height:300px}.toolbar{grid-template-columns:1fr 1fr}.toolbar button{grid-column:1/-1}.grid-3{grid-template-columns:1fr}.quote-breakdown{grid-template-columns:1fr!important}
+}
+
+</style>
+</head>
+<body>
+<div id="app">
+
+  <section id="welcome" class="screen">
+    <div class="content" style="padding-top:28px;padding-bottom:24px;">
+      <div class="hero">
+        <div class="brand-mark">✦</div>
+        <h1> Inspection Studio</h1>
+        <p>A mbile-first vehicle assessment app with guided 360° inspection, issue marking, intelligent quote building, and signature capture.</p>
+        <div class="feature-list">
+          <div class="feature"><i>📸</i><div><strong>Scan or intake vehicle once</strong><span>Scan, decode VIN, or enter model manually — only in the intake step.</span></div></div>
+          <div class="feature"><i>🧭</i><div><strong>Clear guided inspection</strong><span>Front, rear, left, right, top, and interior views with labeled issue marking.</span></div></div>
+          <div class="feature"><i>💬</i><div><strong>Quote logic</strong><span>Scores, add-ons, package recommendation, signature, and send actions</span></div></div>
+        </div>
+        <button class="primary-btn" onclick="go('intake')">Start inspection →</button>
+      </div>
+    </div>
+  </section>
+
+  <section id="intake" class="screen out-right">
+    <div class="topbar">
+      <button class="icon-btn" onclick="go('welcome','back')">←</button>
+      <div class="title-wrap"><div class="kicker">Step 1</div><div class="page-title">Intake & service</div></div>
+      <button class="ghost-btn" onclick="resetAll()">Reset</button>
+    </div>
+    <div class="progress">
+      <div class="p-step active"><span>1</span> Intake</div>
+      <div class="p-step" id="p2a"><span>2</span> Inspect</div>
+      <div class="p-step" id="p3a"><span>3</span> Quote</div>
+    </div>
+    <div class="content">
+      <div class="summary-banner">
+        <div><strong>Single source of truth</strong><span>Vehicle scan, VIN decode, model selection, size, travel zone, and service all stay here.</span></div>
+        <div class="badge">No duplicate intake</div>
+      </div>
+
+      <div class="section">
+        <div class="scan-strip">
+          <button class="action-chip" onclick="alert('Camera scan can be connected later with backend / device APIs.')">📸 Scan vehicle</button>
+          <button class="action-chip" onclick="document.getElementById('f-make').focus()">🚗 Select model</button>
+        </div>
+      </div>
+
+      <div class="section card">
+        <div class="section-head">
+          <div><div class="section-title">Customer details</div><div class="section-sub">Basic information for quote and follow-up.</div></div>
+        </div>
+        <div class="grid-2">
+          <div class="field"><label>Full name *</label><input class="input" id="f-name" placeholder="Full Name"/></div>
+          <div class="field"><label>Phone *</label><input class="input" id="f-phone" placeholder="+91 9xxxxxxxxx"/></div>
+        </div>
+        <div class="grid-2" style="margin-top:10px;">
+          <div class="field"><label>Email</label><input class="input" id="f-email" placeholder="name@email.com"/></div>
+          <div class="field"><label>Zip code</label><input class="input" id="f-zip" placeholder="560037"/></div>
+        </div>
+      </div>
+
+      <div class="section card soft">
+        <div class="section-head">
+          <div><div class="section-title">Vehicle details</div><div class="section-sub">Decode VIN or fill manually.</div></div>
+          <div class="badge warning">Intake only</div>
+        </div>
+        <div class="inline-tools">
+          <input class="input" id="f-vin" maxlength="17" placeholder="VIN (17 characters)"/>
+          <button class="primary-btn" style="height:50px;padding:0 16px;white-space:nowrap;" onclick="decodeVIN()">Decode</button>
+        </div>
+        <div id="decoded-row" class="grid-2" style="margin-top:10px;display:none;">
+          <div class="card" style="padding:12px;"><div class="note">Year</div><strong id="dc-year"></strong></div>
+          <div class="card" style="padding:12px;"><div class="note">Make</div><strong id="dc-make"></strong></div>
+          <div class="card" style="padding:12px;"><div class="note">Model</div><strong id="dc-model"></strong></div>
+          <div class="card" style="padding:12px;"><div class="note">Color</div><strong id="dc-color"></strong></div>
+        </div>
+        <div class="grid-3" style="margin-top:10px;">
+          <div class="field"><label>Year *</label><select id="f-year" class="input"><option value="">Year</option></select></div>
+          <div class="field"><label>Make *</label><select id="f-make" class="input"><option value="">Make</option></select></div>
+          <div class="field"><label>Model *</label><input id="f-model" class="input" placeholder="Accord"/></div>
+        </div>
+        <div class="field" style="margin-top:10px;"><label>Color</label><select id="f-color" class="input"><option value="">Color</option><option>White</option><option>Silver</option><option>Black</option><option>Red</option><option>Blue</option><option>Grey</option><option>Green</option><option>Brown</option><option>Other</option></select></div>
+      </div>
+
+      <div class="section card">
+        <div class="section-head"><div><div class="section-title">Vehicle size</div><div class="section-sub">Used as the price multiplier.</div></div></div>
+        <div class="choice-grid">
+          <div class="choice-card active" data-size="sedan" onclick="setSize('sedan',1,this)"><div class="icon">🚘</div><div class="name">Sedan</div><div class="sub">×1.00</div></div>
+          <div class="choice-card" data-size="large" onclick="setSize('large',1.37,this)"><div class="icon">🚙</div><div class="name">Large / XL</div><div class="sub">×1.37</div></div>
+          <div class="choice-card" data-size="oversize" onclick="setSize('oversize',1.65,this)"><div class="icon">🚐</div><div class="name">Oversize</div><div class="sub">×1.65</div></div>
+        </div>
+      </div>
+
+      <div class="section card">
+        <div class="section-head"><div><div class="section-title">Travel zone</div><div class="section-sub">Applied as a fixed travel fee.</div></div></div>
+        <div class="option-list">
+          <div class="option active" data-zone="1" onclick="setZone(0,this)"><div class="option-left"><strong>Zone 1 · 0–10 mi</strong><span>Nearby service area</span></div><div class="option-right">Free</div></div>
+          <div class="option" data-zone="1" onclick="setZone(25,this)"><div class="option-left"><strong>Zone 2 · 10–20 mi</strong><span>Short travel surcharge</span></div><div class="option-right">+$25</div></div>
+          <div class="option" data-zone="1" onclick="setZone(50,this)"><div class="option-left"><strong>Zone 3 · 20–30 mi</strong><span>Mid travel surcharge</span></div><div class="option-right">+$50</div></div>
+          <div class="option" data-zone="1" onclick="setZone(75,this)"><div class="option-left"><strong>Zone 4 · 30+ mi</strong><span>Long travel surcharge</span></div><div class="option-right">+$75</div></div>
+        </div>
+      </div>
+
+      <div class="section card soft">
+        <div class="section-head"><div><div class="section-title">Service mode</div><div class="section-sub">Keep quick mode for fast jobs or open detailed manual scoring.</div></div></div>
+        <div class="segmented" id="mode-toggle">
+          <button class="active" onclick="setMode('quick',this)">Quick</button>
+          <button onclick="setMode('detailed',this)">Detailed</button>
+        </div>
+      </div>
+
+      <div class="section card">
+        <div class="section-head"><div><div class="section-title">Select service</div><div class="section-sub">All original service options are kept.</div></div></div>
+        <div class="service-tabs" id="svc-cat-tabs">
+          <button class="service-tab active" onclick="filterServiceCategory('detail',this)">Detailing</button>
+          <button class="service-tab" onclick="filterServiceCategory('correction',this)">Correction</button>
+          <button class="service-tab" onclick="filterServiceCategory('coating',this)">Coating</button>
+        </div>
+        <div id="service-list" class="option-list"></div>
+      </div>
+    </div>
+    <div class="footer-actions">
+      <button class="primary-btn" onclick="goToInspection()">Next: inspection →</button>
+    </div>
+  </section>
+
+  <section id="inspect" class="screen out-right">
+    <div class="topbar">
+      <button class="icon-btn" onclick="go('intake','back')">←</button>
+      <div class="title-wrap"><div class="kicker">Step 2</div><div class="page-title">Inspection & issues</div></div>
+      <button class="ghost-btn" onclick="resetAll()">Reset</button>
+    </div>
+    <div class="progress">
+      <div class="p-step done"><span>✓</span> Intake</div>
+      <div class="p-step active"><span>2</span> Inspect</div>
+      <div class="p-step" id="p3b"><span>3</span> Quote</div>
+    </div>
+    <div class="content">
+      <div id="decline-banner" class="decline">⚠ Auto-decline triggered. A biohazard issue or score 5 on seats/carpet means service should not proceed until reviewed manually.</div>
+
+      <div class="section inspector-shell">
+        <div class="inspector-top">
+          <div><strong>Guided 360° view</strong><span>Choose the side first, then tap the vehicle to mark an issue.</span></div>
+          <div class="badge" id="selected-issue-pill">Scratch · S1</div>
+        </div>
+        <div class="view-tabs" id="view-tabs"></div>
+        <div class="vehicle-stage" id="vehicle-stage" onclick="addMarker(event)">
+          <div class="stage-tag" id="stage-tag">Front view</div>
+          <div class="stage-hint">Tap the diagram to add issue marker</div>
+          <div id="vehicle-diagram"></div>
+        </div>
+        <div class="orientation-note"><i>🧭</i><div><strong style="display:block;font-size:13px;margin-bottom:3px;">Orientation helper</strong><span id="view-helper" style="font-size:12px;color:var(--muted);">Front · bumper, hood, windshield.</span></div></div>
+        <div class="toolbar">
+          <select class="input" id="issue-type" onchange="updateSelectedIssuePill()">
+            <option value="scratch">Scratch</option>
+            <option value="dent">Dent</option>
+            <option value="stain">Stain</option>
+            <option value="chip">Chip</option>
+            <option value="odor">Odor</option>
+            <option value="biohazard">Biohazard</option>
+          </select>
+          <select class="input" id="issue-severity" onchange="updateSelectedIssuePill()">
+            <option value="1">Severity 1</option>
+            <option value="2">Severity 2</option>
+            <option value="3" selected>Severity 3</option>
+            <option value="4">Severity 4</option>
+            <option value="5">Severity 5</option>
+          </select>
+          <button class="secondary-btn" style="height:50px;" onclick="clearMarkersOnView();event.stopPropagation();">Clear view</button>
+        </div>
+      </div>
+
+      <div class="section card soft">
+        <div class="section-head"><div><div class="section-title">Live score summary</div><div class="section-sub">Issue marking and manual scoring both update the same totals.</div></div></div>
+        <div class="score-strip">
+          <div class="metric"><small>Exterior</small><strong id="ext-total">—</strong></div>
+          <div class="metric"><small>Interior</small><strong id="int-total">—</strong></div>
+          <div class="metric"><small>Overall</small><strong id="overall-total">—</strong></div>
+        </div>
+      </div>
+
+      <div class="section card">
+        <div class="section-head"><div><div class="section-title">Logged issues</div><div class="section-sub">Issues are grouped by vehicle view. Remove any incorrect marker.</div></div><button class="ghost-btn" onclick="clearAllMarkers()" style="height:38px;">Clear all</button></div>
+        <div class="issue-list" id="issue-list"><div class="note">No issues marked yet.</div></div>
+      </div>
+
+      <div class="section card soft">
+        <div class="collapse-head" onclick="toggleScores()">
+          <div><div class="section-title">Detailed 1–5 scoring</div><div class="section-sub">Keep the original scoring model as an expert override.</div></div>
+          <button id="score-toggle-label">Show</button>
+        </div>
+        <div class="collapse-body" id="score-collapse">
+          <div id="score-container"></div>
+        </div>
+      </div>
+    </div>
+    <div class="footer-actions">
+      <button class="secondary-btn" onclick="go('intake','back')">Back</button>
+      <button class="primary-btn" onclick="goToQuote()">Next: quote →</button>
+    </div>
+  </section>
+
+  <section id="quote" class="screen out-right">
+    <div class="topbar">
+      <button class="icon-btn" onclick="go('inspect','back')">←</button>
+      <div class="title-wrap"><div class="kicker">Step 3</div><div class="page-title">Package & quote</div></div>
+      <button class="ghost-btn" onclick="resetAll()">Reset</button>
+    </div>
+    <div class="progress">
+      <div class="p-step done"><span>✓</span> Intake</div>
+      <div class="p-step done"><span>✓</span> Inspect</div>
+      <div class="p-step active"><span>3</span> Quote</div>
+    </div>
+    <div class="content">
+      <div class="section card soft">
+        <div class="section-head"><div><div class="section-title">Condition snapshot</div><div class="section-sub">Recommended package adjusts with the current score profile.</div></div></div>
+        <div class="score-strip">
+          <div class="metric"><small>Exterior score</small><strong id="g-ext">—</strong></div>
+          <div class="metric"><small>Interior score</small><strong id="g-int">—</strong></div>
+          <div class="metric"><small>Maintenance</small><strong id="g-maint" style="font-size:18px;">—</strong></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="section-head"><div><div class="section-title">Choose package</div><div class="section-sub">A complete visual redesign, same core package logic.</div></div></div>
+        <div id="package-list"></div>
+      </div>
+
+      <div class="section card">
+        <div class="section-head"><div><div class="section-title">Triggered add-ons</div><div class="section-sub">Auto-shown from condition findings, still optional to select.</div></div></div>
+        <div class="pill-line" id="addon-list"></div>
+        <div id="no-addons" class="note" style="margin-top:8px;">No add-ons triggered — condition looks good.</div>
+      </div>
+
+      <div class="section card soft">
+        <div class="section-head"><div><div class="section-title">Quote summary</div><div class="section-sub">Live pricing with size multiplier, zone fee, add-ons, and tax.</div></div></div>
+        <div class="quote-breakdown">
+          <div class="card" style="padding:14px;background:#fff;">
+            <div style="font-family:'Space Grotesk',sans-serif;font-size:20px;letter-spacing:-.03em;margin-bottom:3px;" id="q-vehicle">—</div>
+            <div class="note" id="q-meta">—</div>
+            <div style="margin-top:10px;display:grid;gap:4px;">
+              <div class="line-item"><span>Service</span><strong id="q-svc">—</strong></div>
+              <div class="line-item"><span>Duration</span><strong id="q-dur">—</strong></div>
+              <div class="line-item"><span>Size multiplier</span><strong id="q-mult">×1.00</strong></div>
+              <div class="line-item"><span>Travel zone</span><strong id="q-zone">Free</strong></div>
+              <div class="line-item"><span>Add-ons</span><strong id="q-addons">—</strong></div>
+              <div class="line-item"><span>Subtotal</span><strong id="q-subtotal">—</strong></div>
+              <div class="line-item"><span>Tax (6.625%)</span><strong id="q-tax">—</strong></div>
+            </div>
+          </div>
+          <div class="total-panel">
+            <small>Total quote</small>
+            <strong id="q-total">$0.00</strong>
+            <span id="q-breakdown">Service + zone + add-ons + tax</span>
+          </div>
+          <div id="maint-badge" class="badge" style="display:none;">✓ Maintenance eligible</div>
+        </div>
+      </div>
+
+      <div class="section card">
+        <div class="section-head"><div><div class="section-title">Pre-existing condition acknowledgement</div><div class="section-sub">Kept from the original workflow.</div></div></div>
+        <div class="note" style="font-size:12px;line-height:1.7;color:var(--muted);">The defects and conditions documented during this inspection existed prior to detailing services being performed. By signing below, the vehicle owner acknowledges that the above defects existed prior to service and that reasonable care will be taken but some pre-existing damage may not be fully correctable.</div>
+      </div>
+
+      <div class="section card soft">
+        <div class="section-head"><div><div class="section-title">Customer signature</div><div class="section-sub">Sign to authorize the service and acknowledge the assessment.</div></div></div>
+        <div class="signature-pad">
+          <canvas id="sig-canvas" width="400" height="100"></canvas>
+          <button class="clear-link" onclick="clearSig()">Clear</button>
+        </div>
+        <div class="grid-2" style="margin-top:10px;">
+          <div class="field"><label>Customer name</label><input id="sig-name" class="input" placeholder="Customer name"/></div>
+          <div class="field"><label>Date</label><input id="sig-date" class="input" readonly/></div>
+        </div>
+      </div>
+
+      <div class="section card">
+        <div class="section-head"><div><div class="section-title">Send quote</div><div class="section-sub">UI is ready; backend integrations can be plugged later.</div></div></div>
+        <div class="send-grid">
+          <button class="primary-btn" style="background:linear-gradient(135deg,var(--green),#31a875);" onclick="alert('Email integration requires backend setup.')">✉ Email quote</button>
+          <button class="primary-btn" style="background:linear-gradient(135deg,var(--accent),#f39b79);" onclick="alert('SMS integration requires backend setup.')">💬 Text quote</button>
+        </div>
+      </div>
+    </div>
+    <div class="footer-actions">
+      <button class="secondary-btn" onclick="go('inspect','back')">Back</button>
+      <button class="primary-btn" onclick="finalizeAssessment()">Confirm & complete</button>
+    </div>
+  </section>
+
+  <section id="done" class="screen out-right">
+    <div class="done-wrap">
+      <div class="done-ring">✓</div>
+      <h2>Assessment complete</h2>
+      <p>Vehicle details, 360° inspection issues, quote, and signature are captured in a polished professional workflow.</p>
+      <div class="ref-badge" id="done-ref">REF #DQ-00000000</div>
+      <div class="stack">
+        <button class="primary-btn" onclick="alert('PDF export requires backend setup.')">📄 Download PDF report</button>
+        <button class="secondary-btn" onclick="alert('WhatsApp sharing requires backend setup.')">🟢 Share via WhatsApp</button>
+        <button class="secondary-btn" onclick="resetAll()">+ New assessment</button>
+      </div>
+    </div>
+  </section>
+
+</div>
+<script>
+const serviceData = [
+  {cat:'detail',name:'Exterior Detail',base:200,dur:'2.5–3 hr',desc:'Wash, decon, clay bar, sealant'},
+  {cat:'detail',name:'Interior Detail',base:300,dur:'3.5–4.5 hr',desc:'Full 14-step steam & scrub'},
+  {cat:'detail',name:'Signature Detail',base:350,dur:'3.5–4.5 hr',desc:'Full exterior + interior refresh'},
+  {cat:'detail',name:'Ultimate Detail',base:500,dur:'6–7 hr',desc:'Everything. Deep interior + engine bay'},
+  {cat:'correction',name:'Gloss Enhancement',base:400,dur:'3.5–4.5 hr',desc:'Single polish: depth and clarity'},
+  {cat:'correction',name:'One Step Correction',base:550,dur:'5–6 hr',desc:'AIO compound: 50–60% correction'},
+  {cat:'correction',name:'Two Step Correction',base:850,dur:'8–9 hr',desc:'Multi-stage: 80–90% correction'},
+  {cat:'coating',name:'New Vehicle Coating',base:699,dur:'3–4 hr',desc:'Clean paint verified. No correction'},
+  {cat:'coating',name:'Level 1 Ceramic',base:899,dur:'5–6 hr',desc:'Single-stage polish + CC1 coating'},
+  {cat:'coating',name:'Level 2 Ceramic',base:1205,dur:'7–8 hr',desc:'Full correction + CC1 + wheels'}
+];
+
+const packageData = [
+  {key:'ext',name:'Exterior Detail',base:200,dur:'2.5–3 hr',sub:'Sealant (4–6 mo)',features:['Full wash, decon, clay bar, ceramic sealant','Wheels, tires, glass, trim','No interior work']},
+  {key:'int',name:'Interior Detail',base:300,dur:'3.5–4.5 hr',sub:'Interior deep clean',features:['Tornador air, vacuum, steam, leather, carpets','Headliner and glass','No exterior work']},
+  {key:'sig',name:'Signature Detail',base:350,dur:'3.5–4.5 hr',sub:'Sealant (4–6 mo)',features:['Full exterior detail','Interior vacuum, wipe, glass','Maintenance eligible']},
+  {key:'ult',name:'Ultimate Detail',base:500,dur:'6–7 hr',sub:'CCI C12+ (8–12 mo)',features:['Deep interior + engine bay','Paint protection sealant','Pre-inspection photos + care guide']}
+];
+
+const extCats = [
+  {id:'pc',label:'Paint contamination',scores:['Smooth','Slight rough','Iron spots','Heavy','Sap / overspray']},
+  {id:'dg',label:'Dirt & grime',scores:['Light film','Moderate dust','Dirty buildup','Very dirty','Caked mud']},
+  {id:'wt',label:'Wheels & tires',scores:['Light dust','Moderate dust','Heavy baked','Rust stain','Corroded']},
+  {id:'gl',label:'Glass',scores:['Minor spots','Moderate spots','Heavy spots','Mineral etching','Severely etched']},
+  {id:'pt',label:'Plastics & trim',scores:['Slight fade','Moderate fade','Chalky','Cracking','Warped']}
+];
+const intCats = [
+  {id:'cm',label:'Carpet & mats',scores:['Minimal dirt','Light soil','Moderate stains','Heavy hair','Mold — decline'],decline:true},
+  {id:'st',label:'Seats',scores:['Clean','Light marks','Visible stains','Heavy tears','Saturated — decline'],decline:true},
+  {id:'le',label:'Leather',scores:['Supple','Light soil','Moderate crack','Heavy cracks','Extreme damage']},
+  {id:'dc',label:'Dash & console',scores:['Dust only','Light grime','Sticky grime','Heavy UV','Melted / severe']},
+  {id:'od',label:'Odor',scores:['None','Mild','Noticeable','Strong smoke','Extreme']},
+  {id:'hl',label:'Headliner',scores:['Clean','Light spots','Moderate stains','Heavy sagging','Severe']}
+];
+
+const viewMeta = {
+  front:{label:'Front view',helper:'Front · bumper, hood, windshield.',type:'front'},
+  rear:{label:'Rear view',helper:'Rear · trunk, bumper, tail lamps.',type:'rear'},
+  left:{label:'Left side',helper:'Left side · doors, quarter panels, mirrors.',type:'side'},
+  right:{label:'Right side',helper:'Right side · doors, quarter panels, mirrors.',type:'side'},
+  top:{label:'Top view',helper:'Top · roof, sunroof, bonnet contour.',type:'top'},
+  interior:{label:'Interior view',helper:'Interior · seats, carpets, console, headliner.',type:'interior'}
+};
+
+const scoreTemplate = {pc:0,dg:0,wt:0,gl:0,pt:0,cm:0,st:0,le:0,dc:0,od:0,hl:0};
+const scoreKeys = Object.keys(scoreTemplate);
+
+const state = {
+  step:1,
+  size:'sedan',
+  multiplier:1,
+  zone:0,
+  serviceCategory:'detail',
+  mode:'quick',
+  svc:{name:'Exterior Detail',base:200,dur:'2.5–3 hr'},
+  scores:{...scoreTemplate},
+  manualScores:{...scoreTemplate},
+  autoScores:{...scoreTemplate},
+  currentView:'front',
+  markers:[],
+  pkg:'ext',
+  addons:{leather:false,headliner:false,glass:false,odor:false},
+  addonPrices:{leather:62.5,headliner:50,glass:125,odor:75}
+};
+
+function $(id){return document.getElementById(id)}
+function money(n){return '$'+Number(n).toFixed(2)}
+function cap(t){return t.charAt(0).toUpperCase()+t.slice(1)}
+
+function go(id,dir){
+  document.querySelectorAll('.screen').forEach(s=>{
+    if(s.id===id)s.classList.remove('out-right','out-left');
+    else s.classList.add(dir==='back'?'out-right':'out-left');
+  });
+}
+
+function updateProgress(){
+  if(state.step>=2){$('p2a').className='p-step done'; $('p3a').className = state.step>=3 ? 'p-step done':'p-step';}
+  else {$('p2a').className='p-step'; $('p3a').className='p-step';}
+  $('p3b').className = state.step>=3 ? 'p-step done':'p-step';
+}
+
+function populateSelects(){
+  const year = $('f-year');
+  for(let y = new Date().getFullYear(); y>=1990; y--){
+    const o=document.createElement('option'); o.value=y; o.textContent=y; year.appendChild(o);
+  }
+  ['Acura','BMW','Chevrolet','Ford','Honda','Hyundai','Kia','Lexus','Mercedes','Nissan','Subaru','Tesla','Toyota','Volkswagen'].forEach(m=>{
+    const o=document.createElement('option'); o.value=m; o.textContent=m; $('f-make').appendChild(o);
+  });
+}
+
+function decodeVIN(){
+  const vin = $('f-vin').value.trim();
+  if(vin.length < 5){ alert('Enter a VIN to decode.'); return; }
+  const fakeData = {year:'2020',make:'Honda',model:'Accord',color:'White'};
+  $('decoded-row').style.display='grid';
+  $('dc-year').textContent = fakeData.year;
+  $('dc-make').textContent = fakeData.make;
+  $('dc-model').textContent = fakeData.model;
+  $('dc-color').textContent = fakeData.color;
+  $('f-year').value = fakeData.year;
+  $('f-make').value = fakeData.make;
+  $('f-model').value = fakeData.model;
+  $('f-color').value = fakeData.color;
+}
+
+function setSize(size,mult,el){
+  state.size=size; state.multiplier=mult;
+  document.querySelectorAll('.choice-card').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');
+}
+function setZone(fee,el){
+  state.zone=fee;
+  document.querySelectorAll('[data-zone]').forEach(o=>o.classList.remove('active'));
+  el.classList.add('active');
+}
+function setMode(mode,btn){
+  state.mode=mode;
+  document.querySelectorAll('#mode-toggle button').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+function renderServices(){
+  const list = $('service-list');
+  list.innerHTML='';
+  serviceData.filter(s=>s.cat===state.serviceCategory).forEach(s=>{
+    const el = document.createElement('div');
+    el.className = 'option'+(state.svc.name===s.name?' active':'');
+    el.innerHTML = `<div class="option-left"><strong>${s.name}</strong><span>${s.desc}</span></div><div class="option-right">from ${money(s.base)}<br><span style="font-size:11px;color:var(--muted)">${s.dur}</span></div>`;
+    el.onclick = ()=>selectService(s.name,s.base,s.dur,el);
+    list.appendChild(el);
+  });
+}
+function filterServiceCategory(cat,btn){
+  state.serviceCategory = cat;
+  document.querySelectorAll('.service-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  renderServices();
+}
+function selectService(name,base,dur,el){
+  state.svc = {name,base,dur};
+  document.querySelectorAll('#service-list .option').forEach(o=>o.classList.remove('active'));
+  el.classList.add('active');
+}
+
+function goToInspection(){
+  state.step=2; updateProgress(); renderViews(); updateSelectedIssuePill(); updateIssueList(); updateScoreTotals(); go('inspect');
+}
+function goToQuote(){
+  state.step=3; updateProgress(); buildQuote(); go('quote');
+}
+
+function carSvg(view){
+  const baseStart = `<svg class="car-svg" viewBox="0 0 360 220" aria-label="${viewMeta[view].label}" role="img">`;
+  const baseEnd = `</svg>`;
+  if(view==='front') return baseStart + `
+    <text x="180" y="18" text-anchor="middle" class="car-label-soft">WINDSHIELD</text>
+    <text x="180" y="210" text-anchor="middle" class="car-label-soft">FRONT BUMPER</text>
+    <text x="18" y="115" text-anchor="middle" transform="rotate(-90 18 115)" class="car-label-soft">LEFT</text>
+    <text x="342" y="115" text-anchor="middle" transform="rotate(90 342 115)" class="car-label-soft">RIGHT</text>
+    <path class="car-fill" d="M100 42 Q180 16 260 42 L288 184 Q182 206 72 184 Z"/>
+    <path class="car-glass" d="M124 54 Q180 35 236 54 L222 94 Q180 84 138 94 Z"/>
+    <path class="car-detail" d="M93 122 Q180 102 267 122 M106 158 Q180 175 254 158"/>
+    <rect x="91" y="164" width="54" height="16" rx="8" class="car-light"/><rect x="215" y="164" width="54" height="16" rx="8" class="car-light"/>
+    <rect x="58" y="86" width="22" height="84" rx="10" class="car-dark" opacity=".18"/><rect x="280" y="86" width="22" height="84" rx="10" class="car-dark" opacity=".18"/>
+    <text x="180" y="140" text-anchor="middle" class="car-main-label">FRONT</text>` + baseEnd;
+  if(view==='rear') return baseStart + `
+    <text x="180" y="18" text-anchor="middle" class="car-label-soft">REAR GLASS</text>
+    <text x="180" y="210" text-anchor="middle" class="car-label-soft">REAR BUMPER</text>
+    <text x="18" y="115" text-anchor="middle" transform="rotate(-90 18 115)" class="car-label-soft">LEFT</text>
+    <text x="342" y="115" text-anchor="middle" transform="rotate(90 342 115)" class="car-label-soft">RIGHT</text>
+    <path class="car-fill" d="M82 38 Q180 20 278 38 L292 174 Q180 205 68 174 Z"/>
+    <path class="car-glass" d="M122 48 Q180 35 238 48 L230 84 Q180 76 130 84 Z"/>
+    <path class="car-detail" d="M98 118 Q180 136 262 118 M93 152 L267 152"/>
+    <rect x="88" y="132" width="50" height="17" rx="8" class="car-tail"/><rect x="222" y="132" width="50" height="17" rx="8" class="car-tail"/>
+    <rect x="148" y="140" width="64" height="20" rx="6" fill="#fff" stroke="#d5d9d5"/>
+    <text x="180" y="108" text-anchor="middle" class="car-main-label">REAR</text>` + baseEnd;
+  if(view==='left' || view==='right'){
+    const sideLabel = view==='left'?'LEFT SIDE':'RIGHT SIDE';
+    const frontText = view==='left'?'FRONT →':'← FRONT';
+    const rearText = view==='left'?'← REAR':'REAR →';
+    return baseStart + `
+      <text x="58" y="28" text-anchor="middle" class="car-label-soft">${rearText}</text>
+      <text x="304" y="28" text-anchor="middle" class="car-label-soft">${frontText}</text>
+      <text x="180" y="208" text-anchor="middle" class="car-label-soft">WHEELS / LOWER PANELS</text>
+      <path class="car-fill" d="M42 140 Q52 98 100 88 L130 58 L232 58 Q268 68 300 98 Q332 106 338 140 L322 154 L66 154 Z"/>
+      <path class="car-glass" d="M132 66 L112 94 L176 94 L176 66 Z"/>
+      <path class="car-glass" d="M184 66 L184 94 L264 94 Q247 74 226 66 Z"/>
+      <path class="car-detail" d="M178 62 L178 154 M96 106 L305 106 M94 122 L318 122"/>
+      <circle cx="102" cy="154" r="30" class="car-tire"/><circle cx="102" cy="154" r="14" class="car-rim"/>
+      <circle cx="274" cy="154" r="30" class="car-tire"/><circle cx="274" cy="154" r="14" class="car-rim"/>
+      <rect x="306" y="116" width="24" height="10" rx="5" class="car-light"/>
+      <text x="180" y="132" text-anchor="middle" class="car-main-label">${sideLabel}</text>` + baseEnd;
+  }
+  if(view==='top') return baseStart + `
+    <text x="180" y="18" text-anchor="middle" class="car-label-soft">WINDSHIELD / HOOD</text>
+    <text x="180" y="210" text-anchor="middle" class="car-label-soft">REAR GLASS / TRUNK</text>
+    <text x="18" y="115" text-anchor="middle" transform="rotate(-90 18 115)" class="car-label-soft">LEFT SIDE</text>
+    <text x="342" y="115" text-anchor="middle" transform="rotate(90 342 115)" class="car-label-soft">RIGHT SIDE</text>
+    <path class="car-fill" d="M118 28 Q180 12 242 28 Q265 74 260 110 Q266 156 238 194 Q180 212 122 194 Q94 156 100 110 Q95 74 118 28 Z"/>
+    <path class="car-glass" d="M134 45 Q180 35 226 45 L218 82 Q180 76 142 82 Z"/>
+    <path class="car-glass" d="M142 142 Q180 134 218 142 L228 178 Q180 190 132 178 Z"/>
+    <path class="car-detail" d="M116 108 L244 108 M128 92 Q180 102 232 92 M128 126 Q180 116 232 126"/>
+    <text x="180" y="116" text-anchor="middle" class="car-main-label">ROOF</text>` + baseEnd;
+  return baseStart + `
+    <text x="180" y="18" text-anchor="middle" class="car-label-soft">DASHBOARD</text>
+    <text x="180" y="210" text-anchor="middle" class="car-label-soft">REAR SEATS / CARPET</text>
+    <text x="18" y="115" text-anchor="middle" transform="rotate(-90 18 115)" class="car-label-soft">DRIVER</text>
+    <text x="342" y="115" text-anchor="middle" transform="rotate(90 342 115)" class="car-label-soft">PASSENGER</text>
+    <rect x="62" y="32" width="236" height="164" rx="30" class="interior-fill"/>
+    <rect x="92" y="48" width="176" height="24" rx="12" fill="#fff2d9" stroke="#d6a963"/>
+    <rect x="82" y="88" width="74" height="54" rx="18" class="seat-fill"/><rect x="204" y="88" width="74" height="54" rx="18" class="seat-fill"/>
+    <rect x="106" y="154" width="148" height="30" rx="15" class="seat-fill"/>
+    <path class="car-detail" d="M180 82 L180 146 M62 150 L298 150"/>
+    <text x="180" y="128" text-anchor="middle" class="car-main-label" fill="rgba(141,87,21,.42)">CABIN</text>` + baseEnd;
+}
+
+function renderViews(){
+  const tabs = $('view-tabs'); tabs.innerHTML='';
+  Object.keys(viewMeta).forEach(key=>{
+    const btn=document.createElement('button'); btn.className='view-tab'+(state.currentView===key?' active':''); btn.textContent=viewMeta[key].label.replace(' view','');
+    btn.onclick = ()=>{ state.currentView=key; renderViews(); updateIssueList(); };
+    tabs.appendChild(btn);
+  });
+  $('stage-tag').textContent=viewMeta[state.currentView].label;
+  $('view-helper').textContent=viewMeta[state.currentView].helper;
+  $('vehicle-diagram').innerHTML = carSvg(state.currentView);
+  renderMarkers();
+}
+
+function updateSelectedIssuePill(){
+  $('selected-issue-pill').textContent = `${cap($('issue-type').value)} · S${$('issue-severity').value}`;
+}
+
+function addMarker(event){
+  if(event.target.closest('.secondary-btn')) return;
+  const stage = $('vehicle-stage');
+  const rect = stage.getBoundingClientRect();
+  const x = ((event.clientX - rect.left)/rect.width)*100;
+  const y = ((event.clientY - rect.top)/rect.height)*100;
+  const type = $('issue-type').value;
+  const severity = Number($('issue-severity').value);
+  const marker = {id:Date.now()+Math.random(), view:state.currentView, x, y, type, severity};
+  state.markers.push(marker);
+  recomputeAutoScores();
+  renderMarkers();
+  updateIssueList();
+  updateScoreTotals();
+}
+
+function renderMarkers(){
+  $('vehicle-stage').querySelectorAll('.marker').forEach(m=>m.remove());
+  state.markers.filter(m=>m.view===state.currentView).forEach((m,idx)=>{
+    const el=document.createElement('div');
+    el.className='marker s'+m.severity;
+    el.style.left=m.x+'%'; el.style.top=m.y+'%';
+    el.textContent=idx+1;
+    el.title=`${cap(m.type)} · Severity ${m.severity}`;
+    $('vehicle-stage').appendChild(el);
+  });
+}
+
+function clearMarkersOnView(){
+  state.markers = state.markers.filter(m=>m.view!==state.currentView);
+  recomputeAutoScores();
+  renderMarkers(); updateIssueList(); updateScoreTotals();
+}
+function clearAllMarkers(){
+  state.markers=[]; recomputeAutoScores(); renderMarkers(); updateIssueList(); updateScoreTotals();
+}
+
+function updateIssueList(){
+  const list = $('issue-list');
+  if(!state.markers.length){ list.innerHTML='<div class="note">No issues marked yet.</div>'; return; }
+  list.innerHTML='';
+  state.markers.forEach((m,i)=>{
+    const item=document.createElement('div'); item.className='issue-item';
+    item.innerHTML = `<div><strong>${viewMeta[m.view].label.replace(' view','')} · ${cap(m.type)} · Severity ${m.severity}</strong><span>Marker ${i+1} · ${m.x.toFixed(0)}%, ${m.y.toFixed(0)}%</span></div><button onclick="removeMarker('${m.id}')">×</button>`;
+    list.appendChild(item);
+  });
+}
+function removeMarker(id){
+  state.markers = state.markers.filter(m=>String(m.id)!==String(id));
+  recomputeAutoScores();
+  renderMarkers(); updateIssueList(); updateScoreTotals();
+}
+
+function applyIssueToTarget(target,type,severity,view){
+  const setMax = (cat,val)=>{ target[cat] = Math.max(target[cat], val); };
+  if(['front','rear','left','right','top'].includes(view)){
+    if(type==='scratch' || type==='chip') setMax('pc', severity);
+    if(type==='dent') setMax('dg', severity);
+    if(type==='chip') setMax('pt', Math.max(2,severity));
+    if(type==='scratch') setMax('gl', Math.min(severity,3));
+  }
+  if(view==='interior'){
+    if(type==='stain') { setMax('cm', severity); setMax('st', severity); }
+    if(type==='odor') setMax('od', severity);
+    if(type==='biohazard'){ setMax('cm',5); setMax('st',5); }
+  }
+  if(type==='odor') setMax('od', severity);
+  if(type==='biohazard'){ setMax('cm',5); setMax('st',5); }
+}
+
+function refreshScoresFromSources(){
+  scoreKeys.forEach(k=>{ state.scores[k] = Math.max(state.manualScores[k], state.autoScores[k]); });
+  renderScoreCards();
+}
+
+function recomputeAutoScores(){
+  state.autoScores = {...scoreTemplate};
+  state.markers.forEach(m=>applyIssueToTarget(state.autoScores,m.type,m.severity,m.view));
+  refreshScoresFromSources();
+}
+
+function toggleScores(){
+  const body=$('score-collapse'); const btn=$('score-toggle-label');
+  body.classList.toggle('open'); btn.textContent = body.classList.contains('open') ? 'Hide' : 'Show';
+}
+
+function renderScoreCards(){
+  const wrap = $('score-container'); wrap.innerHTML='';
+  const allGroups = [{title:'Exterior scoring', cats:extCats},{title:'Interior scoring', cats:intCats}];
+  allGroups.forEach(group=>{
+    const heading=document.createElement('div'); heading.className='section-title'; heading.style.margin='6px 0 10px'; heading.textContent=group.title; wrap.appendChild(heading);
+    group.cats.forEach(cat=>{
+      const card=document.createElement('div'); card.className='score-card';
+      card.innerHTML = `<div class="score-title"><div>${cat.label}</div><span id="lbl-${cat.id}">${state.scores[cat.id]?`— ${state.scores[cat.id]}/5`:''}</span></div>`;
+      const grid=document.createElement('div'); grid.className='score-grid';
+      cat.scores.forEach((txt,index)=>{
+        const score=index+1;
+        const btn=document.createElement('button');
+        btn.className='score-btn'+(cat.decline && score===5?' decline-btn':'')+(state.scores[cat.id]===score?' active':'');
+        btn.innerHTML = `<b>${score}</b><small>${txt}</small>`;
+        btn.onclick=()=>setScore(cat.id,score);
+        grid.appendChild(btn);
+      });
+      card.appendChild(grid); wrap.appendChild(card);
+    });
+  });
+}
+
+function setScore(cat,val){
+  state.manualScores[cat]=val;
+  refreshScoresFromSources();
+  updateScoreTotals();
+}
+function updateScoreButtonUI(cat){
+  refreshScoresFromSources();
+}
+
+function updateScoreTotals(){
+  const ext = extCats.map(c=>state.scores[c.id]).filter(Boolean);
+  const int = intCats.map(c=>state.scores[c.id]).filter(Boolean);
+  const extAvg = ext.length ? Math.round(ext.reduce((a,b)=>a+b,0)/ext.length * 20) : null;
+  const intAvg = int.length ? Math.round(int.reduce((a,b)=>a+b,0)/int.length * 20) : null;
+  const overall = (extAvg!==null || intAvg!==null) ? Math.round(((extAvg||0)+(intAvg||0))/((extAvg!==null && intAvg!==null)?2:1)) : null;
+  $('ext-total').textContent = extAvg!==null ? extAvg : '—';
+  $('int-total').textContent = intAvg!==null ? intAvg : '—';
+  $('overall-total').textContent = overall!==null ? overall : '—';
+  const decline = state.scores.cm===5 || state.scores.st===5 || state.markers.some(m=>m.type==='biohazard');
+  $('decline-banner').classList.toggle('show', decline);
+}
+
+function getCurrentScores(){
+  const ext = extCats.map(c=>state.scores[c.id]).filter(Boolean);
+  const int = intCats.map(c=>state.scores[c.id]).filter(Boolean);
+  const extAvg = ext.length ? Math.round(ext.reduce((a,b)=>a+b,0)/ext.length * 20) : 0;
+  const intAvg = int.length ? Math.round(int.reduce((a,b)=>a+b,0)/int.length * 20) : 0;
+  return {ext:extAvg,int:intAvg,overall:Math.round((extAvg+intAvg)/((extAvg&&intAvg)?2:1 || 1))};
+}
+
+function recommendPackage(){
+  const {ext,int,overall} = getCurrentScores();
+  if(state.svc.name==='Interior Detail') return 'int';
+  if(state.svc.name==='Signature Detail') return 'sig';
+  if(state.svc.name==='Ultimate Detail') return 'ult';
+  if(overall >= 70 || int >= 70) return 'ult';
+  if(overall >= 45) return 'sig';
+  return 'ext';
+}
+
+function buildPackages(){
+  const list = $('package-list'); list.innerHTML='';
+  const rec = recommendPackage(); if(!state.pkg) state.pkg = rec; if(!packageData.find(p=>p.key===state.pkg)) state.pkg=rec;
+  packageData.forEach(pkg=>{
+    const adjusted = pkg.base * state.multiplier;
+    const card=document.createElement('div');
+    card.className='package-card'+(state.pkg===pkg.key?' active':'')+(rec===pkg.key?' recommended':'');
+    card.innerHTML = `<div class="package-head"><div><strong>${pkg.name}</strong><span>${pkg.dur} · ${pkg.sub}</span></div><div class="package-price">${money(adjusted)}<small>base ${money(pkg.base)} × ${state.multiplier.toFixed(2)}</small></div></div><div class="features">${pkg.features.map(f=>`<div>• ${f}</div>`).join('')}</div>`;
+    card.onclick=()=>{state.pkg=pkg.key; buildPackages(); updateQuote();};
+    list.appendChild(card);
+  });
+}
+
+function updateAddonTriggers(){
+  const triggers = {
+    leather: state.scores.le >= 3,
+    headliner: state.scores.hl >= 3,
+    glass: state.scores.gl >= 3,
+    odor: state.scores.od >= 3
+  };
+  const list = $('addon-list'); list.innerHTML='';
+  const labels = {
+    leather:'Leather clean + condition',
+    headliner:'Headliner cleaning',
+    glass:'Glass coating',
+    odor:'Odor elimination'
+  };
+  let any = false;
+  Object.keys(triggers).forEach(key=>{
+    if(triggers[key]){
+      any = true;
+      const pill=document.createElement('button');
+      pill.className='pill'+(state.addons[key]?' active':'');
+      pill.innerHTML=`${labels[key]} · ${money(state.addonPrices[key])}`;
+      pill.onclick=()=>{state.addons[key]=!state.addons[key]; updateAddonTriggers(); updateQuote();};
+      list.appendChild(pill);
+    } else {
+      state.addons[key]=false;
+    }
+  });
+  $('no-addons').style.display = any ? 'none' : 'block';
+}
+
+function buildQuote(){
+  const scores=getCurrentScores();
+  $('g-ext').textContent = scores.ext || '—';
+  $('g-int').textContent = scores.int || '—';
+  $('g-maint').textContent = scores.overall && scores.overall <= 45 ? 'Eligible' : 'Review';
+  if(!state.pkg) state.pkg = recommendPackage();
+  buildPackages();
+  updateAddonTriggers();
+  updateQuote();
+  $('sig-date').value = new Date().toLocaleDateString();
+}
+
+function getSelectedPackage(){ return packageData.find(p=>p.key===state.pkg) || packageData[0]; }
+
+function updateQuote(){
+  const pkg = getSelectedPackage();
+  const vehicle = [ $('f-year').value, $('f-make').value, $('f-model').value ].filter(Boolean).join(' ') || 'Vehicle pending';
+  const meta = [ $('f-color').value || 'Color not set', state.size, state.zone ? `Zone +${money(state.zone)}` : 'Zone free' ].join(' · ');
+  const base = pkg.base * state.multiplier;
+  const addonTotal = Object.keys(state.addons).reduce((sum,k)=>sum+(state.addons[k]?state.addonPrices[k]:0),0);
+  const subtotal = base + state.zone + addonTotal;
+  const tax = subtotal * 0.06625;
+  const total = subtotal + tax;
+  $('q-vehicle').textContent = vehicle;
+  $('q-meta').textContent = meta;
+  $('q-svc').textContent = pkg.name;
+  $('q-dur').textContent = pkg.dur;
+  $('q-mult').textContent = '×'+state.multiplier.toFixed(2);
+  $('q-zone').textContent = state.zone ? `+${money(state.zone)}` : 'Free';
+  const chosenAddons = Object.keys(state.addons).filter(k=>state.addons[k]).map(k=>cap(k));
+  $('q-addons').textContent = chosenAddons.length ? chosenAddons.join(', ') : 'None';
+  $('q-subtotal').textContent = money(subtotal);
+  $('q-tax').textContent = money(tax);
+  $('q-total').textContent = money(total);
+  $('q-breakdown').textContent = `${money(base)} service + ${state.zone?money(state.zone):'$0.00'} zone + ${money(addonTotal)} add-ons`;
+  const maint = pkg.key==='sig' || (getCurrentScores().overall && getCurrentScores().overall<=45);
+  $('maint-badge').style.display = maint ? 'inline-flex':'none';
+}
+
+function initSignature(){
+  const canvas = $('sig-canvas');
+  const ctx = canvas.getContext('2d');
+  ctx.lineWidth = 2.2; ctx.lineCap='round'; ctx.strokeStyle='#1f2933';
+  let drawing=false;
+  function point(e){
+    const rect=canvas.getBoundingClientRect();
+    const touch = e.touches ? e.touches[0] : e;
+    return {x:(touch.clientX-rect.left)*(canvas.width/rect.width), y:(touch.clientY-rect.top)*(canvas.height/rect.height)};
+  }
+  function start(e){drawing=true; const p=point(e); ctx.beginPath(); ctx.moveTo(p.x,p.y); e.preventDefault();}
+  function move(e){if(!drawing)return; const p=point(e); ctx.lineTo(p.x,p.y); ctx.stroke(); e.preventDefault();}
+  function end(){drawing=false;}
+  canvas.addEventListener('mousedown',start); canvas.addEventListener('mousemove',move); window.addEventListener('mouseup',end);
+  canvas.addEventListener('touchstart',start,{passive:false}); canvas.addEventListener('touchmove',move,{passive:false}); window.addEventListener('touchend',end);
+}
+function clearSig(){ const c=$('sig-canvas'); c.getContext('2d').clearRect(0,0,c.width,c.height); }
+
+function finalizeAssessment(){
+  const ref = 'DQ-' + Math.floor(Math.random()*90000000 + 10000000);
+  $('done-ref').textContent = 'REF #' + ref;
+  go('done');
+}
+
+function resetAll(){ location.reload(); }
+
+populateSelects();
+renderServices();
+renderViews();
+renderScoreCards();
+updateSelectedIssuePill();
+updateScoreTotals();
+initSignature();
+$('sig-date').value = new Date().toLocaleDateString();
+</script>
+</body>
+</html>
